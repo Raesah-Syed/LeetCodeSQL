@@ -1,0 +1,10 @@
+/* Write your T-SQL query statement below */
+SELECT month, country, count(approved_count) as trans_count, sum(approved_count) as approved_count,sum(amount) as trans_total_amount, sum(approved_amount) as approved_total_amount from
+(
+SELECT FORMAT(trans_date, 'yyyy-MM') AS month, country,
+case when state='approved' then 1 else 0 end as approved_count,
+case when state='approved' then amount else 0 end as approved_amount,
+amount FROM Transactions
+)x
+group by month,country
+order by month,country

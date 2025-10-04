@@ -1,0 +1,11 @@
+
+-- if there is no price before 2019-08-16, keep it as 10
+-- any price on or before 2019-08-16
+with x as(
+SELECT *, row_number() over(partition by product_id order by change_date desc) as r
+from Products where change_date<='2019-08-16'
+)
+,y as(
+select * from x where r=1
+)
+select distinct p.product_id,coalesce(y.new_price,10) as price from Products p left join y on p.product_id=y.product_id

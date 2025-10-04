@@ -1,0 +1,10 @@
+/* Write your T-SQL query statement below */
+
+SELECT visited_on, SUM(amount) over(ORDER BY visited_on ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) amount,
+round(AVG(amount*1.0) over(ORDER BY visited_on ROWS BETWEEN 6 PRECEDING AND CURRENT ROW),2) average_amount
+FROM (SELECT visited_on, sum(amount) amount from Customer group by visited_on) x
+ORDER BY visited_on
+OFFSET 6 ROWS
+
+
+

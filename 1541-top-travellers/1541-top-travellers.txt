@@ -1,0 +1,4 @@
+SELECT name, coalesce(sum(distance),0) as travelled_distance from
+(SELECT name,user_id, u.id, distance from Users u left join Rides r on u.id=r.user_id) x
+group by user_id,name 
+order by travelled_distance desc

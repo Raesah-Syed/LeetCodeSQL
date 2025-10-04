@@ -1,0 +1,10 @@
+/* Write your T-SQL query statement below */
+SELECT product_id,coalesce(round(sum(t)*1.0/sum(units),2),0) as average_price from 
+--Prices s left join (
+    (
+SELECT p.product_id,price*units as t,units from Prices p left join UnitsSold u on p.product_id=u.product_id and u.purchase_date between p.start_date and p.end_date
+)x 
+group by product_id
+--on s.product_id=x.product_id
+
+

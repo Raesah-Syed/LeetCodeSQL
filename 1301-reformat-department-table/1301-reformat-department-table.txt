@@ -1,0 +1,48 @@
+/*SELECT id, sum(Jan_Revenue) as Jan_Revenue,
+sum(Feb_Revenue) as Feb_Revenue,
+sum(Mar_Revenue) as Mar_Revenue,
+sum(Apr_Revenue) as Apr_Revenue,
+sum(May_Revenue) as May_Revenue,
+sum(Jun_Revenue) as Jun_Revenue,
+sum(Jul_Revenue) as Jul_Revenue,
+sum(Aug_Revenue) as Aug_Revenue,
+sum(Sep_Revenue) as Sep_Revenue,
+sum(Oct_Revenue) as Oct_Revenue,
+sum(Nov_Revenue) as Nov_Revenue,
+sum(Dec_Revenue) as Dec_Revenue
+from(
+SELECT id, 
+case when month='Jan' then revenue else null end as Jan_Revenue,
+case when month='Feb' then revenue else null end as Feb_Revenue,
+case when month='Mar' then revenue else null end as Mar_Revenue,
+case when month='Apr' then revenue else null end as Apr_Revenue,
+case when month='May' then revenue else null end as May_Revenue,
+case when month='Jun' then revenue else null end as Jun_Revenue,
+case when month='Jul' then revenue else null end as Jul_Revenue,
+case when month='Aug' then revenue else null end as Aug_Revenue,
+case when month='Sep' then revenue else null end as Sep_Revenue,
+case when month='Oct' then revenue else null end as Oct_Revenue,
+case when month='Nov' then revenue else null end as Nov_Revenue,
+case when month='Dec' then revenue else null end as Dec_Revenue
+From Department) x
+group by id*/
+SELECT id, 
+[Jan] AS [Jan_Revenue],
+[Feb] AS [Feb_Revenue],
+[Mar] AS [Mar_Revenue],
+[Apr] AS [Apr_Revenue],
+[May] AS [May_Revenue],
+[Jun] AS [Jun_Revenue],
+[Jul] AS [Jul_Revenue],
+[Aug] AS [Aug_Revenue],
+[Sep] AS [Sep_Revenue],
+[Oct] AS [Oct_Revenue],
+[Nov] AS [Nov_Revenue],
+[Dec] AS [Dec_Revenue]
+FROM
+(SELECT * FROM Department) AS x
+PIVOT(
+    SUM(revenue) 
+    FOR
+    month in ([Jan],[Feb],[Mar],[Apr],[May],[Jun],[Jul],[Aug],[Sep],[Oct],[Nov],[Dec])
+) as r

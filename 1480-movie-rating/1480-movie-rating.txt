@@ -1,0 +1,28 @@
+/*with a as 
+(SELECT top 1 name as results from Users u join
+    (SELECT user_id, count(rating) as c from MovieRating group by user_id ) v on u.user_id=v.user_id order by v.c desc, name asc)
+, b as (
+SELECT top 1 title as results from Movies m join (
+SELECT movie_id,avg(rating*1.0) as rate from  MovieRating r 
+where created_at like '2020-02%' group by r.movie_id
+)x on m.movie_id=x.movie_id
+order by rate desc
+)
+
+select results from a
+union
+select results from b*/
+with a as(
+SELECT top 1 name as results from Users u join (SELECT user_id, count(rating) as c from MovieRating group by user_id)x on u.user_id=x.user_id
+order by c desc, name 
+)
+, b as (
+SELECT top 1 title as results from Movies m join (SELECT movie_id, avg(rating*1.0) as r from MovieRating
+where created_at like '2020-02-%' group by movie_id) y on m.movie_id=y.movie_id
+order by r desc, title
+)
+
+
+select results from a
+union all
+select results from b

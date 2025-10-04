@@ -1,0 +1,5 @@
+/* Write your T-SQL query statement below */
+SELECT s.user_id, coalesce(round(sum(c.cc)*1.0/count(cc),2),0) as confirmation_rate FROM Signups s left join (
+SELECT user_id, case when action='confirmed' then 1 else 0 end as cc from Confirmations
+)c on s.user_id=c.user_id
+group by s.user_id

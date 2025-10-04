@@ -1,0 +1,7 @@
+/* Write your T-SQL query statement below */
+SELECT top 1 person_name from(
+SELECT person_name,person_id, SUM(weight) OVER (order by turn) as tot from Queue
+)x
+where tot<=1000
+order by tot desc
+

@@ -1,0 +1,14 @@
+/*with x as (select *,case when order_date=customer_pref_delivery_date then 'i' else 's' end as o from Delivery)
+,y as (select min(order_date) as first_orders,customer_id from Delivery group by customer_id)
+,z as (select case when o='i' then 1 else 0 end as cnt from x join y on x.customer_id=y.customer_id and first_orders=order_date)
+select sum(z.cnt)/count(o) from z*/
+
+--SELECT customer_id from Delivery where customer_pref_delivery_date=order_date 
+with x as(
+SELECT customer_id, min(order_date) as first_order from Delivery group by customer_id
+)
+, y as (
+SELECT customer_id, order_date from Delivery where customer_pref_delivery_date=order_date
+)
+SELECT round(count(*)*100.0/(select count(*) from x) ,2)as immediate_percentage from y join x on x.customer_id=y.customer_id and x.first_order=y.order_date
+--join y on x.customer_id=y.customer_id
