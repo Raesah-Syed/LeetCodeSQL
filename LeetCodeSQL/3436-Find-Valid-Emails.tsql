@@ -1,0 +1,6 @@
+SELECT *
+FROM Users
+WHERE email LIKE '%[a-zA-Z0-9_]@%[a-zA-Z].com'
+  AND email NOT LIKE '%[^a-zA-Z0-9_]%@%'
+  AND email NOT LIKE '%@%[^a-zA-Z]%.com'
+ORDER BY user_id;
