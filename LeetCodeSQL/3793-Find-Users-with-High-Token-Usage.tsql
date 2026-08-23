@@ -1,0 +1,17 @@
+/* Write your T-SQL query statement below */
+with x as (
+SELECT user_id
+, max(tokens) as m
+,count(prompt) as prompt_count
+, round(sum(tokens)*1.00/count(tokens),2) as avg_tokens
+from prompts 
+group by user_id
+having count(prompt)>=3 )
+
+SELECT distinct 
+p.user_id
+, x.prompt_count
+, x.avg_tokens 
+from prompts p join x on p.user_id=x.user_id 
+where tokens<m
+order by avg_tokens desc, user_id asc
