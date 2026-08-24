@@ -1,0 +1,9 @@
+with a as (SELECT user_id
+--, datepart(week,activity_date) as aw 
+, activity_type, round(avg(activity_duration*1.0),2) as av
+from UserActivity
+group by user_id,activity_type)
+,b as (
+SELECT user_id, max(case when activity_type='free_trial' then av end) as trial_avg_duration,max(case when activity_type='paid' then av end) as paid_avg_duration FROM a
+group by user_id)
+SELECT * from b where paid_avg_duration is not null and trial_avg_duration is not null
