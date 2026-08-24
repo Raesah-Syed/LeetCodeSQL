@@ -1,0 +1,18 @@
+with t as (
+    SELECT *
+    , row_number() over (partition by store_id order by price desc) as xr
+    , row_number() over (partition by store_id order by price) as nr
+from inventory)
+, r as (
+SELECT s.store_id
+, store_name
+,s.location
+, max(case when xr=1 then product_name end) as most_exp_product
+, max(case when nr=1 then product_name end) as cheapest_product
+, round(max(case when nr=1 then cast(quantity as decimal) end)/max(case when xr=1 then quantity end),2) as imbalance_ratio
+ from t join stores s on t.store_id=s.store_id
+ group by s.store_id,store_name,location
+ having count(*)>=3
+)
+SELECT * FROM r where imbalance_ratio>1  
+order by imbalance_ratio desc, store_name
