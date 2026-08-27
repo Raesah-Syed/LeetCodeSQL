@@ -1,0 +1,11 @@
+with p as (SELECT patient_id, min(test_date) as mt FROM covid_tests where result='Positive' group by patient_id)
+, x as (SELECT p.patient_id,min(test_date) as nt from covid_tests c join p on c.patient_id=p.patient_id where c.test_date>p.mt and result='Negative' group by p.patient_id )
+SELECT 
+p.patient_id, 
+s.patient_name as patient_name,
+ s.age  as age,
+ datediff(day,p.mt,x.nt)  as recovery_time 
+from p join x on p.patient_id=x.patient_id 
+join patients s on p.patient_id=s.patient_id
+
+order by recovery_time, patient_name
