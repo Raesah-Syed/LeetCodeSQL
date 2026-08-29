@@ -1,0 +1,17 @@
+with b as (
+SELECT customer_id, 
+count(order_id) as total_orders ,
+SUM(CASE WHEN ((DATEPART(HOUR,order_timestamp) BETWEEN 11 AND 13) OR  (DATEPART(HOUR,order_timestamp)=14 AND DATEPART(MINUTE, order_timestamp)=00))
+         OR (DATEPART(HOUR,order_timestamp) BETWEEN 18 AND 20) OR  (DATEPART(HOUR,order_timestamp)=21 AND DATEPART(MINUTE, order_timestamp)=00) THEN 1 
+    ELSE 0 
+END) AS po,
+
+SUM(order_rating)*1.00 as sr
+, SUM (CASE WHEN order_rating is not null then 1 else 0 end) as ord
+from restaurant_orders
+group by customer_id
+having count(*)>2)
+
+SELECT customer_id, total_orders, round((po*100.0)/total_orders,0) as peak_hour_percentage, round(sr*1.00/ord,2) as average_rating
+FROM b where (po*100/total_orders) >=60 and round(sr*1.00/ord,2)>=4.00 and (ord*100.00/total_orders)>=50
+order by average_rating desc, customer_id desc
