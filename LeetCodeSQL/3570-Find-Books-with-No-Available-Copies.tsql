@@ -1,0 +1,6 @@
+with x as (
+SELECT distinct book_id,count(*) as current_borrowers FROM borrowing_records where return_date is null group by book_id)
+
+SELECT x.book_id, title, author, genre, publication_year, x.current_borrowers FROM library_books l join x on l.book_id=x.book_id
+where l.total_copies-x.current_borrowers=0
+order by current_borrowers desc, title 
