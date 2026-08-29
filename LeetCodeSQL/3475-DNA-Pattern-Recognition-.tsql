@@ -1,0 +1,7 @@
+
+SELECT *,
+CASE WHEN dna_sequence like 'ATG%' then 1 else 0 end as has_start,
+CASE WHEN dna_sequence like '%TAA' or dna_sequence like '%TAG' or dna_sequence like '%TGA' THEN 1 else 0 end as has_stop,
+CASE WHEN dna_sequence like '%ATAT%' then 1 else 0 end as has_atat,
+CASE WHEN dna_sequence like '%GGG%' then 1 else 0 end as has_ggg
+FROM Samples 
