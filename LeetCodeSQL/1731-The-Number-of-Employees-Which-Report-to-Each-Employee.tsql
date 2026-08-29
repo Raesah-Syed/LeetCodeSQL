@@ -1,0 +1,3 @@
+SELECT m.employee_id, min(m.name) as name, count(e.name) as reports_count, round(avg(e.age*1.0),0) as average_age
+from Employees e join Employees m on e.reports_to=m.employee_id
+group by m.employee_id
