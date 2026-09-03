@@ -1,0 +1,7 @@
+with x as (
+SELECT buyer_id, case when year(order_date)='2019' then 1 else 0 end as orders_in_2019
+from Orders)
+
+Select u.user_id as buyer_id, min(u.join_date) as join_date, coalesce(sum(orders_in_2019),0) as orders_in_2019
+from Users u left join x on x.buyer_id=u.user_id
+group by u.user_id
