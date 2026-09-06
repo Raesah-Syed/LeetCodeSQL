@@ -1,0 +1,15 @@
+with x as (
+SELECT user_id
+, row_number() over (partition by user_id order by event_date desc) as rn
+
+, monthly_amount as cmr
+,plan_name as current_plan
+,event_type
+from subscription_events)
+, y as (
+    SELECT user_id, max(monthly_amount) as mha, datediff(day,min(event_date),max(event_date)) as das, sum(case when event_type='downgrade' then 1 else 0 end) as dg from subscription_events group by user_id
+)
+SELECT x.user_id, x.current_plan, x.cmr as current_monthly_amount, y.mha as max_historical_amount, das as days_as_subscriber
+from x join y on x.user_id=y.user_id
+where rn=1 and event_type!='cancel' and y.das>=60 and cmr<mha/2 and y.dg>=1
+order by das desc, user_id
