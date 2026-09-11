@@ -1,0 +1,12 @@
+with x as (
+SELECT student_id, subject, score, row_number() over (partition by student_id,subject order by exam_date) as f, row_number() over (partition by student_id, subject order by exam_date desc) as l from Scores)
+, y as (
+SELECT 
+student_id, 
+subject, 
+sum(case when f=1 then score else 0 end) as first_score, 
+sum(case when l=1 then score else 0 end) as latest_score
+FROM x 
+group by student_id, subject
+having count(*)>=2)
+SELECT * FROM y where first_score<latest_score order by student_id, subject
