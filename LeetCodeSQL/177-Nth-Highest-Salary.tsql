@@ -1,0 +1,6 @@
+CREATE FUNCTION getNthHighestSalary(@N INT) RETURNS INT AS
+BEGIN
+    RETURN (
+        SELECT salary FROM (SELECT salary,row_number() over (order by salary desc) as r from (SELECT distinct salary from Employee)x)y where r=@N
+    );
+END
