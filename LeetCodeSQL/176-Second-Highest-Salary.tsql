@@ -1,0 +1,2 @@
+SELECT max(salary) as SecondHighestSalary from (
+SELECT salary, dense_rank() over (order by salary desc) as r FROM Employee)y where r=2
