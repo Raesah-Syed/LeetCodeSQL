@@ -1,0 +1,3 @@
+SELECT id from (
+SELECT id, temperature as t, lag(temperature) over (order by recorddate) as nt, recorddate as d,lag(recorddate) over(order by recorddate) as nd from Weather  ) w
+where t>nt and datediff(day,d,nd)=-1
