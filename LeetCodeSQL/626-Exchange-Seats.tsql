@@ -1,0 +1,3 @@
+SELECT id, case when id%2!=0 then nid else pid end as student from (
+SELECT id,student, coalesce(lead(student) over (order by id),student) as nid, 
+coalesce(lag(student) over (order by id),student) as pid from Seat)x
