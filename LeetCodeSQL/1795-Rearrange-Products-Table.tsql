@@ -1,0 +1,7 @@
+SELECT product_id, store, price
+from Products
+UNPIVOT(
+store
+FOR 
+price in ([store1],[store2],[store3])
+)p
