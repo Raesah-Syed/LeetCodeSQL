@@ -1,0 +1,3 @@
+SELECT min(name) as name, sum(amount) as balance from Transactions t join Users u on t.account=u.account
+group by t.account
+having sum(amount)>10000
