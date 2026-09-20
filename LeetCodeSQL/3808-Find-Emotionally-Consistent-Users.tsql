@@ -1,0 +1,13 @@
+with x as (SELECT user_id, count(*) as tot
+FROM Reactions 
+group by user_id
+having count(distinct content_id)>4)
+, y as (
+    SELECT user_id, reaction, count(*) as tr from Reactions
+    group by user_id, reaction
+)
+SELECT x.user_id, reaction as dominant_reaction, round(tr*1.0/tot,2) as reaction_ratio from
+(SELECT x.user_id,y.tr, x.tot, y.reaction, row_number() over (partition by y.user_id order by tr desc) as r
+from x join y on x.user_id=y.user_id)x where r=1 and tr*1.0/tot>=0.6
+order by reaction_ratio desc, user_id
+
