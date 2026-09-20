@@ -1,0 +1,10 @@
+with uu as (
+    SELECT distinct users_id from Users where banned='No'
+)
+
+    SELECT distinct request_at as 'Day', 
+    round(sum(case when t.status like 'cancelled%' then 1 else 0 end)*1.0/count(*),2) as 'Cancellation Rate'
+    from Trips t 
+    where request_at between '2013-10-01' and '2013-10-03' and t.client_id in (SELECT * from uu)
+    and t.driver_id in (SELECT * from uu)
+    group by request_at
