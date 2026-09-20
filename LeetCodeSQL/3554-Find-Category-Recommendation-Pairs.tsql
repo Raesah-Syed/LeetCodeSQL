@@ -1,0 +1,14 @@
+with x as (
+    Select distinct p.user_id , pi.category as category1, qi.category as category2 
+    from ProductPurchases p join ProductPurchases q on p.user_id=q.user_id 
+    join ProductInfo pi on pi.product_id=p.product_id
+    join ProductInfo qi on qi.product_id=q.product_id
+    where pi.category<qi.category
+)
+
+Select category1, category2,count(distinct user_id) as customer_count
+from x group by category1, category2
+having count(*)>2
+order by customer_count desc, category1, category2
+
+
