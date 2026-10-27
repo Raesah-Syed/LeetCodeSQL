@@ -1,0 +1,4 @@
+with x as (
+    SELECT *, lag(temperature) over (order by recordDate) as prevt,lag(recordDate) over (order by recordDate) as prevd from Weather 
+)
+SELECT distinct Id from x where temperature>prevt and datediff(day, prevd,recordDate)=1
