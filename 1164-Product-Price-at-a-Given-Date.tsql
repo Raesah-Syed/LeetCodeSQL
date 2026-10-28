@@ -1,0 +1,7 @@
+/* Write your T-SQL query statement below */
+with x as (
+SELECT *, row_number() over (partition by product_id order by change_date desc) as r from Products
+where change_date<='2019-08-16')
+, y as (select distinct product_id from Products)
+
+SELECT distinct y.product_id, coalesce(new_price,10) as price from y left join x on x.product_id=y.product_id and r=1
