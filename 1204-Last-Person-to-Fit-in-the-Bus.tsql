@@ -1,0 +1,3 @@
+with x as (SELECT *,sum(weight) over (order by turn) as tot from Queue )
+, y as (SELECT *,row_number() over (order by tot desc) as r from x where tot<=1000)
+SELECT person_name from y where r=1
