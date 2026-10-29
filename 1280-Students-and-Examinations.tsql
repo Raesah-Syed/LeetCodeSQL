@@ -1,0 +1,5 @@
+with x as (
+    SELECT * from Students cross join Subjects)
+    SELECT x.student_id,min(x.student_name) as student_name,x.subject_name, sum(case when e.student_id is null then 0 else 1 end) as attended_exams from x left join Examinations e on x.student_id=e.student_id and x.subject_name=e.subject_name
+    group by x.student_id,x.subject_name
+    order by x.student_id,x.subject_name
