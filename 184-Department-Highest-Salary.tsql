@@ -1,0 +1,5 @@
+/* Write your T-SQL query statement below */
+with d as (
+SELECT *, dense_rank() over (partition by departmentId order by salary desc) as d from Employee)
+SELECT t.name as Department, d.name as Employee, d.salary as Salary
+from d join Department t on d.departmentId=t.id and d=1
