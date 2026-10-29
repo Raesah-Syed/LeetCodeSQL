@@ -1,0 +1,8 @@
+SELECT day,active_users FROM (
+SELECT activity_date as day,count(distinct user_id) as active_users,datediff(day,activity_date,'2019-07-27') as d 
+from Activity
+group by activity_date
+)x
+where d<30 and d>=0
+
+
