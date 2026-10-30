@@ -1,0 +1,11 @@
+with f as (SELECT fail_date,row_number() over (order by fail_date) as r from failed where fail_date between '2019-01-01' and '2019-12-31')
+, s as (
+    SELECT success_date,row_number() over (order by success_date) as e from succeeded where success_date between '2019-01-01' and '2019-12-31'
+), r1 as (
+SELECT fail_date,dateadd(day,-r,fail_date) as g1 from f)
+,r2 as (SELECT success_date, dateadd(day,-e,success_date) as g2 from s)
+SELECT * FROM (
+SELECT 'failed' as period_state, min(fail_date) as start_date, max(fail_date) as end_date from r1 group by g1 
+union 
+SELECT 'succeeded' as period_state, min(success_date) as start_date, max(success_date) as end_date from r2 group by g2)x
+order by start_date
