@@ -1,0 +1,8 @@
+SELECT top 1 id, sum(num) as num from (
+SELECT distinct requester_id as id,count(*) as num from  RequestAccepted 
+group by requester_id
+union all
+SELECT distinct accepter_id as id ,count(*) as num from  RequestAccepted 
+group by accepter_id)x
+group by id
+order by num desc
