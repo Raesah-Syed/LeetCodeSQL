@@ -1,0 +1,2 @@
+SELECT e.employee_id FROM Employees e left join Employees m on e.manager_id=m.employee_id where 1=1 and m.employee_id is null and e.manager_id is not null and e.salary<30000
+order by employee_id
