@@ -1,0 +1,4 @@
+SELECT top 1 customer_number from (
+SELECT customer_number,count(*) as o from Orders 
+group by customer_number)x
+order by o desc
