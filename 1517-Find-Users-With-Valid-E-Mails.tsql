@@ -1,0 +1,5 @@
+SELECT user_id, name, mail
+FROM Users
+WHERE mail COLLATE Latin1_General_CS_AS LIKE '[a-zA-Z]%@leetcode.com'
+  AND mail NOT LIKE '%[^-a-zA-Z0-9_.@]%'
+  AND mail NOT LIKE '%@%@%';
