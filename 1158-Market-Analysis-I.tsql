@@ -1,0 +1,6 @@
+with x as 
+(SELECT year(order_date) as year,buyer_id,count(*) as orders_in_2019 from Orders 
+where year(order_Date)=2019
+group by year(order_date),buyer_id
+)
+select u.user_id as buyer_id,u.join_date,coalesce(orders_in_2019,0) as orders_in_2019 from Users u left join x on u.user_id=x.buyer_id
