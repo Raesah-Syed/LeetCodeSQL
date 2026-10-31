@@ -1,0 +1,1 @@
+SELECT tweet_id FROM Tweets where len(content)>15
