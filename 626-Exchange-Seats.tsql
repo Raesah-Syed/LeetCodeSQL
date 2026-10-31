@@ -1,0 +1,2 @@
+with x as (select id, lag(student) over (order by id) as ps, student, coalesce(lead(student) over (order by id),student) as ss from Seat)
+SELECT id, case when id%2=0 then ps else ss end as student from x
