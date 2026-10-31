@@ -1,0 +1,4 @@
+with x as (SELECT distinct sell_date, product FROM Activities)
+SELECT sell_date,count(distinct product) as num_sold, string_agg(product,',') as products FROM x
+group by sell_date
+
