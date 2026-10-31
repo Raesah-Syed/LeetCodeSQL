@@ -1,0 +1,4 @@
+with x as (SELECT *, row_number() over (partition by customer_id order by order_date) as r FROM Delivery)
+SELECT round(sum(case when order_Date=customer_pref_delivery_date then 100.0 else 0 end)/count(distinct customer_id),2) as immediate_percentage 
+FROM x 
+where r=1
