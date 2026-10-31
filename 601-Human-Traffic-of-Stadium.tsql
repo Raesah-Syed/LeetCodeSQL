@@ -1,0 +1,6 @@
+with f as (SELECT * FROM Stadium where people>=100)
+, x as (
+SELECT *, id-row_number() over (order by id) as g from f )
+SELECT id,visit_date,people FROM x 
+where g in (
+SELECT g FROM x group by g having count(*)>2)
