@@ -1,0 +1,66 @@
+WITH org AS (
+    -- CEO
+    SELECT
+        employee_id,
+        employee_name,
+        manager_id,
+        salary,
+        1 AS level
+    FROM Employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive employees
+    SELECT
+        e.employee_id,
+        e.employee_name,
+        e.manager_id,
+        e.salary,
+        o.level + 1
+    FROM Employees e
+    JOIN org o
+        ON e.manager_id = o.employee_id
+),
+subordinates AS (
+    -- Direct reports
+    SELECT
+        manager_id,
+        employee_id AS subordinate_id
+    FROM Employees
+    WHERE manager_id IS NOT NULL
+
+    UNION ALL
+
+    -- Indirect reports
+    SELECT
+        s.manager_id,
+        e.employee_id
+    FROM subordinates s
+    JOIN Employees e
+        ON e.manager_id = s.subordinate_id
+),
+stats AS (
+    SELECT
+        s.manager_id,
+        COUNT(*) AS team_size,
+        SUM(e.salary) AS subordinate_salary
+    FROM subordinates s
+    JOIN Employees e
+        ON s.subordinate_id = e.employee_id
+    GROUP BY s.manager_id
+)
+SELECT
+    o.employee_id,
+    o.employee_name,
+    o.level,
+    COALESCE(s.team_size, 0) AS team_size,
+    o.salary + COALESCE(s.subordinate_salary, 0) AS budget
+FROM org o
+LEFT JOIN stats s
+    ON o.employee_id = s.manager_id
+ORDER BY
+    o.level,
+    budget DESC,
+    o.employee_name
+OPTION (MAXRECURSION 0);
