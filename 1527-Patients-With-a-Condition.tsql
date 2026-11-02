@@ -1,0 +1,2 @@
+/* Write your T-SQL query statement below */
+SELECT * FROM Patients where upper(conditions) like '% DIAB1%' or upper(conditions) like 'DIAB1%'
