@@ -1,0 +1,6 @@
+with x as (SELECT seller_id , order_date, item_brand, row_number() over (partition by seller_id order by order_date) as r
+FROM Orders o join Items i on o.item_id=i.item_id)
+SELECT user_id as seller_id, 
+case when item_brand=favorite_brand then 'yes' else 'no' end as '2nd_item_fav_brand'
+FROM users u left join x on u.user_id=x.seller_id and x.r=2
+
