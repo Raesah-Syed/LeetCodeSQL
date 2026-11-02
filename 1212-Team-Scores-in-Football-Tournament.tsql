@@ -1,0 +1,28 @@
+with x as (SELECT  
+case when host_goals>guest_goals then host_team 
+when host_goals<guest_goals then guest_team
+end as win ,
+case when host_goals>guest_goals then 3 else 0 end as sh ,
+case when host_goals<guest_goals then 3 else 0 end as sg 
+FROM Matches)
+, d as (SELECT * from matches where host_goals=guest_goals)
+, sd as (
+SELECT team AS team_id,1 as score
+FROM d
+UNPIVOT (
+    team FOR team_type IN (host_team, guest_team)
+) AS u)
+, z as (
+select win as team_id, case when sg!=0 then sg else sh end as score
+from x 
+where win is not null
+union all
+SELECT * FROM sd)
+SELECT t.team_id, team_name, coalesce(sum(score),0) as num_points 
+from teams t left join z on t.team_id=z.team_id
+group by t.team_id,team_name
+order by num_points desc, team_id
+
+
+
+
