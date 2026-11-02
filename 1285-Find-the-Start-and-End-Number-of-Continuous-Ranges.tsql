@@ -1,0 +1,4 @@
+with x as (
+    SELECT log_id, log_id-row_number() over (order by log_id) as g FROM Logs
+)
+SELECT min(log_id) as start_id, max(log_id) as end_id FROM x group by g
