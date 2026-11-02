@@ -1,0 +1,13 @@
+with x as (SELECT company, count(*) as n FROM Employee
+group by company)
+,y as (
+select e.id
+, e.company
+,e.salary
+, row_number() over (partition by e.company order by salary,id) as m
+, x.n 
+from Employee e join x on e.company=x.company)
+select id,company,salary from y where n%2=0 and m in (n/2, n/2 +1)
+union 
+select id,company,salary from y where n%2!=0 and m in ((n+1)/2)
+
