@@ -1,0 +1,10 @@
+with x as (
+SELECT account_id,
+case when income <20000 then 'Low Salary' 
+     when income between 20000 and 50000 then 'Average Salary'
+     else 'High Salary'
+end as category
+from Accounts)
+SELECT s as category, count(distinct account_id) as accounts_count from (values('Low Salary'),('Average Salary'),('High Salary')) as l(s) left join x on x.category = l.s
+group by s
+order by accounts_count
