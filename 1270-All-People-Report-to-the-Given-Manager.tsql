@@ -1,0 +1,16 @@
+WITH d AS (
+    SELECT distinct employee_id, 0 AS lvl
+    FROM Employees
+    WHERE employee_id=1
+
+    UNION ALL
+
+    SELECT  e.employee_id, d.lvl + 1
+    FROM Employees e
+    JOIN d ON e.manager_id = d.employee_id
+    WHERE d.lvl < =3
+    AND e.employee_id <> e.manager_id
+)
+SELECT distinct employee_id
+FROM d where employee_id!= 1
+
