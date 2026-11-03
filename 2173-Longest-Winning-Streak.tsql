@@ -1,26 +1,12 @@
-WITH a AS (
-    SELECT
-        player_id,
-        result,
-        ROW_NUMBER() OVER (
-            PARTITION BY player_id ORDER BY match_day
-        ) -
-        ROW_NUMBER() OVER (
-            PARTITION BY player_id, result ORDER BY match_day
-        ) AS grp
-    FROM Matches
-),
-b AS (
-    SELECT
-        player_id,
-        result,
-        grp,
-        COUNT(*) AS streak
-    FROM a
-    GROUP BY player_id, result, grp
+with a as (SELECT player_id, match_day, result
+,row_number() over (partition by player_id order by match_day) as pr 
+,row_number() over (partition by player_id,result order by match_day) as rr
+FROM Matches), b as (
+SELECT player_id,pr-rr as gr FROM a
+where result='Win')
+, c as (
+SELECT distinct player_id, count(*) as streak FROM b
+group by player_id,gr
 )
-SELECT
-    player_id,
-    MAX(CASE WHEN result = 'Win' THEN streak ELSE 0 END) AS longest_streak
-FROM b
-GROUP BY player_id;
+SELECT m.player_id, coalesce(max(streak),0) as longest_streak from (SELECT distinct player_id from matches)m left join c on m.player_id=c.player_id
+group by m.player_id
