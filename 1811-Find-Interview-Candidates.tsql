@@ -1,0 +1,24 @@
+with consec_medals as (
+    SELECT contest_id,
+    cand,medal,
+    contest_id - row_number() over (partition by cand order by contest_id) as g 
+    FROM contests 
+    UNPIVOT(
+      cand for medal in ([gold_medal],[silver_medal],[bronze_medal])
+    ) as x
+)
+, z as (
+SELECT distinct cand from consec_medals where medal='gold_medal'
+group by cand
+having count(*)>2
+union 
+SELECT distinct cand FROM consec_medals 
+group by cand,g
+having count(*)>2)
+
+SELECT u.name, mail FROM z join Users u on z.cand=u.user_id
+
+
+
+
+
