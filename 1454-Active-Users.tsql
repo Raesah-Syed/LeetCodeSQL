@@ -1,0 +1,14 @@
+
+with y as (
+    select distinct * from Logins
+)
+,x as (
+    SELECT id, 
+dateadd(day,-dense_rank() over (partition by id order by login_date),login_date) as d 
+from y
+)
+select distinct x.id, a.name from x join Accounts a on x.id=a.id
+group by d,x.id,a.name
+having count(*)>4
+order by x.id
+
