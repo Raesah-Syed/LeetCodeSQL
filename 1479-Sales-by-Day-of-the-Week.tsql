@@ -1,0 +1,15 @@
+with x as (
+SELECT coalesce(quantity,0) as quantity, datepart(dw,order_Date) as dn, item_category from Orders x right join items i on x.item_id=i.item_id
+)
+
+SELECT item_category as CATEGORY, 
+sum(case when dn=2 then quantity else 0 end) as 'MONDAY' ,
+sum(case when dn=3 then quantity else 0 end) as 'TUESDAY' ,
+sum(case when dn=4 then quantity else 0 end) as 'WEDNESDAY', 
+sum(case when dn=5 then quantity else 0 end) as 'THURSDAY' ,
+sum(case when dn=6 then quantity else 0 end) as 'FRIDAY' ,
+sum(case when dn=7 then quantity else 0 end) as 'SATURDAY' ,
+sum(case when dn=1 then quantity else 0 end) as 'SUNDAY'
+from x
+group by item_category
+order by item_category
