@@ -1,0 +1,26 @@
+WITH all_callers(user_id, recipient_id, call_time) AS (
+    SELECT *
+    FROM calls
+    UNION
+    SELECT recipient_id, caller_id, call_time
+    FROM calls
+),
+first_last AS (
+    SELECT user_id,
+        FIRST_VALUE(recipient_id) OVER(
+            PARTITION BY user_id, CAST(call_time AS Date)
+
+            ORDER BY call_time ASC
+        ) AS first_caller,
+
+         FIRST_VALUE(recipient_id) OVER(
+            PARTITION BY user_id, CAST(call_time AS Date)
+
+            ORDER BY call_time DESC
+        ) AS last_caller
+
+    FROM all_callers
+)
+SELECT DISTINCT user_id
+FROM first_last
+WHERE first_caller = last_caller
