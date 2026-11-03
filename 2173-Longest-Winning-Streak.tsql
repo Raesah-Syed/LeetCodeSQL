@@ -1,0 +1,26 @@
+WITH a AS (
+    SELECT
+        player_id,
+        result,
+        ROW_NUMBER() OVER (
+            PARTITION BY player_id ORDER BY match_day
+        ) -
+        ROW_NUMBER() OVER (
+            PARTITION BY player_id, result ORDER BY match_day
+        ) AS grp
+    FROM Matches
+),
+b AS (
+    SELECT
+        player_id,
+        result,
+        grp,
+        COUNT(*) AS streak
+    FROM a
+    GROUP BY player_id, result, grp
+)
+SELECT
+    player_id,
+    MAX(CASE WHEN result = 'Win' THEN streak ELSE 0 END) AS longest_streak
+FROM b
+GROUP BY player_id;
