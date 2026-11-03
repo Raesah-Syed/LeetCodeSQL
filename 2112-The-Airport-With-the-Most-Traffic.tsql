@@ -1,0 +1,8 @@
+SELECT t as airport_id from (
+SELECT t,sum(flights_count) as tot,dense_rank() over (order by sum(flights_count) desc) as a from Flights
+UNPIVOT
+(
+    t for airport in ([departure_airport],[arrival_airport])
+)s
+group by t)x
+where a=1
