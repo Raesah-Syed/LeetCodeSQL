@@ -1,0 +1,8 @@
+with x as (
+    SELECT user_id, purchase_date, lead(purchase_date) over (partition by user_id order by purchase_date) as np 
+    FROM Purchases
+    )
+
+SELECT distinct user_id from x 
+where datediff(day,purchase_date,np)<=7
+order by user_id
