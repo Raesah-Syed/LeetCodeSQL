@@ -1,0 +1,14 @@
+with a as (SELECT product_id,year(purchase_Date) as fp 
+from Orders
+), b as (
+SELECT product_id,fp, dense_rank() over (partition by product_id order by fp) as r FROM a)
+, c as (
+SELECT product_id, fp,count(r) as cy from b
+group by product_id,fp)
+SELECT distinct product_id  FROM (
+SELECT  product_id, fp,cy
+, lead(fp) over (partition by product_id order by fp) as ny
+, lead(cy) over (partition by product_id order by fp) as nc
+from c )g
+where ny-fp=1 and nc>=3 and cy>=3
+
