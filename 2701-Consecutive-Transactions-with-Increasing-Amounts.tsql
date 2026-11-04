@@ -1,0 +1,9 @@
+
+with x as (
+SELECT t.customer_id, t.transaction_date as td,t1.transaction_date as t1d,
+dateadd(day,-row_number() over (partition by t.customer_id order by t.transaction_date),t.transaction_date) as g 
+FROM Transactions t join Transactions t1 on t.customer_id=t1.customer_id 
+and datediff(day,t.transaction_date,t1.transaction_date)=1 and t.amount<t1.amount)
+select customer_id, min(td) as consecutive_start, max(t1d) as consecutive_end from x group by customer_id,g
+having count(*)>=2
+order by customer_id, consecutive_start, consecutive_end
