@@ -1,0 +1,21 @@
+with x as (
+    SELECT customer_id, category, transaction_id,transaction_date,p.product_id, amount FROM Transactions t join Products p on t.product_id=p.product_id
+)
+, y as (
+    SELECT customer_id, category,max(transaction_date) as mt, count(*) as c from x
+    group by customer_id, category
+)
+, z as (
+    SELECT customer_id,category, row_number() over (partition by customer_id order by c desc,mt desc) as r
+    from y
+)
+SELECT x.customer_id
+, round(sum(x.amount),2) as total_amount
+, count(distinct x.transaction_id) as transaction_count
+, count(distinct x.category) as unique_categories
+, round(avg(x.amount),2) as avg_transaction_amount
+, max(z.category) as top_category
+, round((count(distinct x.transaction_id)*10) + (sum(x.amount)/100),2) as loyalty_score
+from x join z on x.customer_id=z.customer_id where r=1
+group by x.customer_id
+ORDER BY loyalty_score DESC, x.customer_id;
