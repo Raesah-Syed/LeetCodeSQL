@@ -1,0 +1,9 @@
+with x as (
+    SELECT employee_id,employee_name, 0 as level, salary
+    from employees where manager_id is null
+    union all
+    SELECT e.employee_id, e.employee_name, level+1 as level, e.salary as salary
+    from employees e join x on e.manager_id=x.employee_id
+)
+SELECT employee_id as subordinate_id, employee_name as subordinate_name, level as hierarchy_level, salary-(SELECT salary from x where level=0) as salary_difference from x where level!=0
+order by level, employee_id
