@@ -1,0 +1,19 @@
+with u as 
+(SELECT user_id,count(movie_id) as c from MovieRating 
+group by user_id),
+a as (
+SELECT name, row_number() over (order by c desc,name) as r
+from u join users us on u.user_id=us.user_id)
+, m as (
+SELECT movie_id, sum(rating*1.0)/count(movie_id) as a FROM Movierating 
+where month(created_at)=2 and year(created_at)=2020
+group by movie_id)
+, f as (
+SELECT title, row_number() over (order by a desc,title) as r from m join Movies v on m.movie_id=v.movie_id)
+
+SELECT name as results from a 
+where r=1
+union all
+SELECT title as results from f
+where r=1
+
