@@ -1,0 +1,3 @@
+SELECT distinct title FROM TVProgram t join content c on t.content_id=c.content_id
+where format(cast(program_date as date),'yyyy-MM')='2020-06'
+and content_type='Movies' and kids_content='Y'
