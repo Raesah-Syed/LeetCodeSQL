@@ -1,0 +1,4 @@
+with x as (
+    SELECT team_id, count(*) as team_size from employee group by team_id
+)
+SELECT employee_id,team_size FROM employee e join x on e.team_id=x.team_id
