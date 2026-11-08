@@ -1,0 +1,1 @@
+SELECT q.id,q.year,coalesce(n.npv,0) as npv FROM Queries q left join NPV n on q.id=n.id and q.year=n.year
