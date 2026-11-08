@@ -1,0 +1,3 @@
+select player_id,device_id from (
+SELECT player_id,device_id, row_number() over (partition by player_id order by event_date) as r FROM Activity)x 
+where r=1
