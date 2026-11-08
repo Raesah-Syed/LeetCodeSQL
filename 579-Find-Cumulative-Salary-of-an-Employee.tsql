@@ -1,0 +1,23 @@
+WITH x AS (
+    SELECT 
+        id,
+        month,
+        salary,
+        ROW_NUMBER() OVER (PARTITION BY id ORDER BY month DESC) AS l
+    FROM Employee
+),
+y AS (
+    SELECT 
+        x.id,
+        x.month,
+        SUM(e.salary) AS Salary
+    FROM x
+    JOIN Employee e
+        ON e.id = x.id
+       AND e.month BETWEEN x.month - 2 AND x.month
+    WHERE x.l != 1
+    GROUP BY x.id, x.month
+)
+SELECT id, month, Salary
+FROM y
+ORDER BY id, month DESC;
