@@ -1,0 +1,4 @@
+with x as (SELECT seller_id, sum(price) as tot FROM Sales
+group by seller_id)
+SELECT seller_id FROM x 
+where tot=(SELECT max(tot) from x)
