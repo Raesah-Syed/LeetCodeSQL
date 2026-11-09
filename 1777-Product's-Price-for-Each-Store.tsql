@@ -1,0 +1,5 @@
+SELECT * FROM Products
+pivot(
+    sum(price)
+    for store in (store1,store2,store3) 
+)x
