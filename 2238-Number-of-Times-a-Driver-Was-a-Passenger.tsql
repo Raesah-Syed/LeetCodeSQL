@@ -1,0 +1,5 @@
+with x as (
+SELECT p.driver_id, count(distinct d.ride_id) as cnt from rides d join rides p on d.passenger_id=p.driver_id
+group by p.driver_id)
+
+SELECT distinct r.driver_id,coalesce(x.cnt,0) as cnt from rides r left join x on r.driver_id=x.driver_id
