@@ -1,0 +1,5 @@
+with x as (SELECT user_id,s.product_id,sum(quantity*price) as t from sales s join product p on s.product_id=p.product_id
+group by user_id,s.product_id)
+SELECT user_id, product_id from (
+SELECT user_id,product_id, rank() over (partition by user_id order by t desc) as r from x)
+y where r=1
