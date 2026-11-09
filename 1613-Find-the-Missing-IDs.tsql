@@ -1,0 +1,15 @@
+
+WITH m as (
+    SELECT MAX(customer_id) as d FROM Customers 
+),
+NumberSequence AS (
+    SELECT 1 AS customer_id
+    UNION ALL
+    SELECT customer_id + 1
+    FROM NumberSequence
+    WHERE customer_id < (SELECT * FROM m)
+)
+SELECT customer_id as ids FROM NumberSequence
+EXCEPT
+SELECT customer_id as ids FROM Customers
+ORDER BY customer_id;
