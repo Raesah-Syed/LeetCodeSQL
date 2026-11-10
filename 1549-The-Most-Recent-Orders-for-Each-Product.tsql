@@ -1,0 +1,9 @@
+with x as (SELECT product_id
+, order_id
+, order_date 
+, rank() over (partition by product_id order by order_date desc) as r
+from Orders)
+SELECT p.product_name, x.product_id,x.order_id,x.order_date 
+FROM x join Products p on x.product_id=p.product_id
+where r=1
+order by product_name, product_id,order_id
