@@ -1,0 +1,29 @@
+WITH YearlyTotals AS (
+    SELECT 
+        customer_id, 
+        YEAR(order_date) AS yr, 
+        SUM(price) as total_price
+    FROM Orders
+    GROUP BY customer_id, YEAR(order_date)
+),
+OrderedYears AS (
+    SELECT 
+        customer_id,
+        yr,
+        total_price,
+        LAG(total_price) OVER (PARTITION BY customer_id ORDER BY yr) AS prev_price,
+        LAG(yr) OVER (PARTITION BY customer_id ORDER BY yr) AS prev_yr
+    FROM YearlyTotals
+),
+Validated AS (
+    SELECT 
+        customer_id,
+        -- Check if every step is strictly increasing AND years are consecutive (diff = 1)
+        SUM(CASE WHEN prev_price IS NOT NULL AND (total_price <= prev_price OR yr - prev_yr != 1) THEN 1 ELSE 0 END) AS invalid_steps,
+        COUNT(*) AS total_years
+    FROM OrderedYears
+    GROUP BY customer_id
+)
+SELECT customer_id
+FROM Validated
+WHERE invalid_steps = 0;
