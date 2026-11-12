@@ -1,0 +1,5 @@
+SELECT distinct s.seller_name
+from Seller s left join Orders o on s.seller_id=o.seller_id
+--and o.seller_id is null
+and year(sale_Date)=2020
+where o.seller_id is null
