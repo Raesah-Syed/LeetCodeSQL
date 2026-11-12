@@ -1,0 +1,13 @@
+with x as (SELECT user_id, transacted_on, -amount as amt,credit
+FROM Transactions t join Users u on u.user_id=t.paid_by
+UNION ALL
+SELECT user_id, transacted_on, amount as amt,credit
+FROM Transactions t join Users u on u.user_id=t.paid_to)
+, y as (
+SELECT user_id,credit,rank() over (partition by user_id order by transacted_on desc) as r,sum(amt) over(partition by user_id order by transacted_on) as t FROM x)
+,z as (
+SELECT user_id, credit+t as credit FROM y where r=1)
+
+
+SELECT distinct u.user_id,u.user_name, coalesce(z.credit,u.credit) as credit, case when z.credit<0 then 'Yes' else 'No' end as credit_limit_breached
+from users u left join z on u.user_id=z.user_id
