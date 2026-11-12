@@ -1,0 +1,1 @@
+SELECT distinct customer_id FROM Customers where revenue>0 and year=2021
