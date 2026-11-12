@@ -1,0 +1,39 @@
+WITH NumberedSteps AS (
+    SELECT 
+        user_id,
+        steps_count,
+        steps_date,
+        ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY steps_date) AS rn
+    FROM Steps
+),
+IslandGroups AS (
+    SELECT 
+        user_id,
+        steps_count,
+        steps_date,
+        DATEADD(day, -rn, steps_date) AS island_grp
+    FROM NumberedSteps
+),
+ConsecutiveStreaks AS (
+    SELECT 
+        user_id,
+        steps_date,
+        AVG(CAST(steps_count AS FLOAT)) OVER (
+            PARTITION BY user_id, island_grp 
+            ORDER BY steps_date 
+            ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+        ) AS rolling_avg,
+        COUNT(*) OVER (
+            PARTITION BY user_id, island_grp 
+            ORDER BY steps_date 
+            ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+        ) AS cnt
+    FROM IslandGroups
+)
+SELECT 
+    user_id,
+    steps_date,
+    CAST(rolling_avg AS DECIMAL(10, 2)) AS rolling_average
+FROM ConsecutiveStreaks
+WHERE cnt = 3
+ORDER BY user_id, steps_date;
