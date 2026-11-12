@@ -1,0 +1,6 @@
+with x as (SELECT employee_id, sum(ceiling(datediff(second, in_time,out_time)/60.0)) as h
+FROM Logs
+group by employee_id)
+SELECT e.employee_id 
+FROM Employees e left join x on e.employee_id=x.employee_id
+where needed_hours*60>h or h is null
