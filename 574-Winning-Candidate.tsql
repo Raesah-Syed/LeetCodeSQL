@@ -1,0 +1,12 @@
+with x as (
+    SELECT candidateId,count(*) as votes from vote 
+group by candidateId
+)
+, r as (
+    SELECT candidateId, rank() over (order by votes desc) as r from x
+)
+SELECT name 
+FROM r 
+join 
+candidate c on r.candidateId=c.id
+where r=1
