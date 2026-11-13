@@ -1,0 +1,11 @@
+WITH t AS (
+    SELECT num,
+           frequency,
+           SUM(frequency) OVER (ORDER BY num) AS cum,
+           SUM(frequency) OVER ()             AS total
+    FROM Numbers
+)
+SELECT AVG(num * 1.0) AS median
+FROM t
+WHERE cum - frequency <= total / 2.0
+  AND cum >= total / 2.0;
