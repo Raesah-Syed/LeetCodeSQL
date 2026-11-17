@@ -1,0 +1,7 @@
+SELECT America, Asia, Europe from 
+(SELECT *, row_number() over (partition by continent order by name) as r
+from Student)u
+PIVOT(
+    max(name)
+    for continent in ([America],[Asia],[Europe])
+)x
