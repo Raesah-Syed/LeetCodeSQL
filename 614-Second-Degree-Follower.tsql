@@ -1,0 +1,4 @@
+SELECT r.followee as follower,count(distinct r.follower) as num 
+FROM Follow f join Follow r on f.follower=r.followee where r.followee is not null
+group by r.followee
+order by r.followee
