@@ -1,0 +1,10 @@
+with x as (
+SELECT 
+seat_id
+, free
+,seat_id-row_number() over (partition by free order by seat_id) as g
+from Cinema
+where free=1)
+SELECT seat_id from x where g in(
+SELECT g FROM x group by g having count(*)>=2)
+order by seat_id
