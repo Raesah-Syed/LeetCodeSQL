@@ -1,0 +1,13 @@
+/* Write your T-SQL query statement below */
+with x as (
+SELECT department_id,format(cast(pay_date as date),'yyyy-MM') as pay_month,amount 
+FROM Salary s join Employee e on s.employee_id=e.employee_id)
+, y as (
+    SELECT pay_month,avg(amount) as comp_s from x group by pay_month
+)
+, z as (
+SELECT x.pay_month, department_id, avg(amount) as dept_s, min(comp_s) as comp_s
+from x join y on x.pay_month=y.pay_month 
+group by x.pay_month,department_id)
+SELECT pay_month, department_id, case when dept_s=comp_s then 'same' when dept_s<comp_s then 'lower' else 'higher' end as comparison
+FROM z
