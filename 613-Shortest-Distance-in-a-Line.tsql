@@ -1,0 +1,2 @@
+SELECT top 1 abs(p2.x-p1.x) as shortest FROM Point p1 join Point p2 on p1.x!=p2.x and p1.x<p2.x
+order by shortest
