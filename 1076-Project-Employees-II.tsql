@@ -1,0 +1,6 @@
+with x as (
+SELECT project_id,count(*) as emp FROM Project group by project_id)
+, y as (
+SELECT *, rank() over (order by emp desc) as er from x)
+Select project_id from y where er=1
+
