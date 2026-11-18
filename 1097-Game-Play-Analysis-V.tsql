@@ -1,0 +1,16 @@
+with x as (
+SELECT player_id, event_date, row_number() over (partition by player_id order by event_date ) as r from Activity)
+, y as (
+    SELECT player_id,event_date, lead(event_date) over (partition by player_id order by event_date) as nd from x where r <=2
+)
+, z as (
+    SELECT event_date, count(player_id) as num from y
+    where datediff(day,event_date, nd)=1 
+    group by event_date
+)
+, a as (
+    SELECT event_date, count(player_id) as den FROM x where r=1 group by event_date
+)
+SELECT a.event_date as install_dt, den as installs, coalesce(round((num*1.0)/den,2),0.0) as Day1_retention
+FROM z right join a on a.event_date=z.event_date
+--SELECT * FROM z
