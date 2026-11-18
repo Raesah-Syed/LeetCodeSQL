@@ -1,0 +1,7 @@
+with x as (
+    SELECT user_id,activity_date,row_number() over (partition by user_id order by activity_date) as r
+FROM Traffic
+where activity='login'
+)
+SELECT activity_date as login_date, count(user_id) as user_count from x where r=1 and activity_date BETWEEN DATEADD(day, -90, '2019-06-30') AND '2019-06-30'
+GROUP BY activity_date
