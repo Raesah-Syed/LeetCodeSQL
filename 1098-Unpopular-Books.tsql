@@ -1,0 +1,9 @@
+with x as (
+    SELECT * FROM books where  available_from <'2019-05-23'
+)
+, y as (
+    SELECT book_id,sum(quantity) as q FROM orders where dispatch_date<'2019-06-23' and dispatch_date>'2018-06-23'
+    group by book_id
+)
+SELECT x.book_id,name FROM x left join y on x.book_id=y.book_id
+where y.book_id is null or q<10
