@@ -1,0 +1,4 @@
+SELECT student_id,course_id,grade from(
+SELECT *, row_number() over (partition by student_id order by grade desc, course_id) as r
+FROM Enrollments)
+x where r=1 order by student_id
