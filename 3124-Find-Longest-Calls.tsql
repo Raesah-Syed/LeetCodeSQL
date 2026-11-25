@@ -1,0 +1,9 @@
+with x as (
+SELECT *, row_number() over (partition by type order by duration desc) r from calls )
+, y as (
+SELECT first_name,type,duration/3600 as h, (duration%3600)/60 as m,duration%60 as s 
+FROM x join contacts c on x.contact_id=c.id
+where r<=3
+)
+SELECT first_name,type, concat(format(h,'00'),':',format(m,'00'),':',format(s,'00')) as duration_formatted FROM y 
+order by type desc,duration_formatted desc,first_name desc
