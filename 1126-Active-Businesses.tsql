@@ -1,0 +1,6 @@
+with x as (SELECT event_type,avg(occurrences) as aa from Events
+group by event_type)
+, y as (
+SELECT business_id,e.event_type,occurrences,aa FROM events e join x on e.event_type=x.event_type)
+SELECT business_id FROM y where occurrences>aa
+group by business_id having count(distinct event_type)>1
