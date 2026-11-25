@@ -1,0 +1,9 @@
+with spam as (
+    SELECT distinct action_date,post_id FROM Actions where extra='spam' and action='report'
+)
+, v as (
+SELECT action_date, case when (r.post_id is not null) then 1 else 0 end as rf
+FROM spam s left join removals r on s.post_id=r.post_id)
+SELECT round(avg(g),2) as average_daily_percent from (
+SELECT action_date, round(sum(rf)*100.00/count(rf),2) as g from v
+group by action_date)c
